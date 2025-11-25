@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button } from './components/ui/button';
 
 const App = () => {
   const [message, setMessage] = useState('');
@@ -14,8 +15,9 @@ const App = () => {
     fetchMessage();
   }, []);
   return (
-    <div>
-      <h1 className="h-16 text-9xl font-bold">{message}</h1>
+    <div className="p-4">
+      <h1 className=" text-2xl font-bold">{message}</h1>
+      <Button variant="destructive">click me</Button>
     </div>
   );
 };
