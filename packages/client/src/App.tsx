@@ -15,7 +15,7 @@ const App = () => {
   }, []);
   return (
     <div>
-      <h1>{message}</h1>
+      <h1 className="h-16 text-9xl font-bold">{message}</h1>
     </div>
   );
 };
