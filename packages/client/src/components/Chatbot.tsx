@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ArrowBigUp } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactMarkdown from 'react-markdown';
 import { Button } from './ui/button';
@@ -21,7 +21,12 @@ const Chatbot = () => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
    const conversationId = useRef(crypto.randomUUID());
+   const fromRef = useRef<HTMLTextAreaElement | null>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
+
+   useEffect(() => {
+      fromRef.current?.scrollIntoView({ behavior: 'smooth' });
+   }, [messages]);
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
@@ -69,6 +74,7 @@ const Chatbot = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-end gap-2 border-2 p-4 rounded-3xl"
             onKeyDown={onKeyDown}
+            ref={fromRef}
          >
             <textarea
                {...register('prompt', {
