@@ -21,23 +21,33 @@ const Chatbot = () => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
    const conversationId = useRef(crypto.randomUUID());
-   const fromRef = useRef<HTMLFormElement | null>(null);
+   const paraRef = useRef<HTMLDivElement | null>(null);
+   const [errors, setErrors] = useState<string | null>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
    useEffect(() => {
-      fromRef.current?.scrollIntoView({ behavior: 'smooth' });
+      paraRef.current?.scrollIntoView({ behavior: 'smooth' });
    }, [messages]);
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
       setIsBotTyping(true);
-      reset(); // clears input after submit
-      const { data } = await axios.post<ChatResponse>('/api/chat', {
-         prompt,
-         conversationId: conversationId.current,
-      });
-      setMessages((prev) => [...prev, { content: data.response, role: 'bot' }]);
-      setIsBotTyping(false);
+      reset({ prompt: '' }); // clears input after submit
+      setErrors(null);
+      try {
+         const { data } = await axios.post<ChatResponse>('/api/chatS', {
+            prompt,
+            conversationId: conversationId.current,
+         });
+         setMessages((prev) => [
+            ...prev,
+            { content: data.response, role: 'bot' },
+         ]);
+      } catch (error) {
+         setErrors('Something went wrong. Please try again.');
+      } finally {
+         setIsBotTyping(false);
+      }
    };
 
    const onKeyDown = (e: React.KeyboardEvent) => {
@@ -56,12 +66,13 @@ const Chatbot = () => {
    };
 
    return (
-      <div>
-         <div className="flex flex-col gap-2 mb-3">
+      <div className="flex flex-col h-full">
+         <div className="flex flex-col flex-1 gap-2 mb-3 overflow-y-auto">
             {messages.map((msg, index) => (
                <div
                   key={index}
                   onCopy={onCopyFN}
+                  ref={index === messages.length - 1 ? paraRef : null}
                   className={`my-2 p-2 rounded ${
                      msg.role === 'user'
                         ? 'bg-blue-100 self-end rounded-lg'
@@ -78,18 +89,19 @@ const Chatbot = () => {
                   <div className="rounded-full bg-gray-800 animate-pulse w-2 h-2 [animation-delay:0.4s]"></div>
                </div>
             )}
+            {errors && <div className="text-red-500">{errors}</div>}
          </div>
          <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-end gap-2 border-2 p-4 rounded-3xl"
             onKeyDown={onKeyDown}
-            ref={fromRef}
          >
             <textarea
                {...register('prompt', {
                   required: true,
                   validate: (value) => value.trim().length > 0,
                })}
+               autoFocus
                className="w-full border-0 focus:outline-0 resize-none"
                placeholder="Ask anything"
                maxLength={1000}
