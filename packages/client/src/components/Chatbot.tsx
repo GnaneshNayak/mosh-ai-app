@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ArrowBigUp } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactMarkdown from 'react-markdown';
 import { Button } from './ui/button';
@@ -47,12 +47,21 @@ const Chatbot = () => {
       }
    };
 
+   const onCopyFN = (e: React.ClipboardEvent<HTMLParagraphElement>) => {
+      const selection = window.getSelection()?.toString().trim();
+      if (selection) {
+         e.preventDefault();
+         e.clipboardData.setData('text/plain', selection);
+      }
+   };
+
    return (
       <div>
          <div className="flex flex-col gap-2 mb-3">
             {messages.map((msg, index) => (
                <div
                   key={index}
+                  onCopy={onCopyFN}
                   className={`my-2 p-2 rounded ${
                      msg.role === 'user'
                         ? 'bg-blue-100 self-end rounded-lg'
