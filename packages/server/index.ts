@@ -1,17 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import { chatController } from './controller/chat.controller.ts';
+import router from './routes.ts';
 
 dotenv.config();
-import type { Request, Response } from 'express';
-const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-   res.json({ message: 'Hello from the server!' });
-});
-app.get('/api/message', (req: Request, res: Response) => {
-   res.json({ message: 'Hello from the server!' });
-});
+const app = express();
+app.use(express.json());
+app.use(router);
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
    console.log(`Server is running on http://localhost:${PORT}`);
