@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { ArrowBigUp } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ReactMarkdown from 'react-markdown';
 import { Button } from '../ui/button';
+import ChatMessages, { type ChatMessage } from './ChatMessages';
 import TypingIndicator from './TypingIndicator';
 
 type FormData = {
@@ -14,21 +14,12 @@ type ChatResponse = {
    response: string;
 };
 
-type ChatMessage = {
-   role: 'user' | 'bot';
-   content: string;
-};
 const Chatbot = () => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
    const conversationId = useRef(crypto.randomUUID());
-   const paraRef = useRef<HTMLDivElement | null>(null);
    const [errors, setErrors] = useState<string | null>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
-
-   useEffect(() => {
-      paraRef.current?.scrollIntoView({ behavior: 'smooth' });
-   }, [messages]);
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
@@ -58,31 +49,10 @@ const Chatbot = () => {
       }
    };
 
-   const onCopyFN = (e: React.ClipboardEvent<HTMLParagraphElement>) => {
-      const selection = window.getSelection()?.toString().trim();
-      if (selection) {
-         e.preventDefault();
-         e.clipboardData.setData('text/plain', selection);
-      }
-   };
-
    return (
       <div className="flex flex-col h-full">
          <div className="flex flex-col flex-1 gap-2 mb-3 overflow-y-auto">
-            {messages.map((msg, index) => (
-               <div
-                  key={index}
-                  onCopy={onCopyFN}
-                  ref={index === messages.length - 1 ? paraRef : null}
-                  className={`my-2 p-2 rounded ${
-                     msg.role === 'user'
-                        ? 'bg-blue-100 self-end rounded-lg'
-                        : 'bg-gray-200 self-start rounded-lg'
-                  }`}
-               >
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-               </div>
-            ))}
+            {messages && <ChatMessages messages={messages} />}
             {isBotTyping && <TypingIndicator />}
             {errors && <div className="text-red-500">{errors}</div>}
          </div>
