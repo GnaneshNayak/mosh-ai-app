@@ -35,7 +35,7 @@ const Chatbot = () => {
       reset({ prompt: '' }); // clears input after submit
       setErrors(null);
       try {
-         const { data } = await axios.post<ChatResponse>('/api/chatS', {
+         const { data } = await axios.post<ChatResponse>('/api/chat', {
             prompt,
             conversationId: conversationId.current,
          });
