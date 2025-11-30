@@ -3,7 +3,8 @@ import { ArrowBigUp } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactMarkdown from 'react-markdown';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
+import TypingIndicator from './TypingIndicator';
 
 type FormData = {
    prompt: string;
@@ -82,13 +83,7 @@ const Chatbot = () => {
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                </div>
             ))}
-            {isBotTyping && (
-               <div className="flex gap-1 px-3 py-2 bg-gray-200 self-start rounded-lg">
-                  <div className="rounded-full bg-gray-800 animate-pulse w-2 h-2"></div>
-                  <div className="rounded-full bg-gray-800 animate-pulse w-2 h-2 [animation-delay:0.2s]"></div>
-                  <div className="rounded-full bg-gray-800 animate-pulse w-2 h-2 [animation-delay:0.4s]"></div>
-               </div>
-            )}
+            {isBotTyping && <TypingIndicator />}
             {errors && <div className="text-red-500">{errors}</div>}
          </div>
          <form
