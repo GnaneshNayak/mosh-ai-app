@@ -21,7 +21,7 @@ const Chatbot = () => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
    const conversationId = useRef(crypto.randomUUID());
-   const fromRef = useRef<HTMLTextAreaElement | null>(null);
+   const fromRef = useRef<HTMLFormElement | null>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
    useEffect(() => {
