@@ -3,13 +3,6 @@ import { useRef, useState } from 'react';
 import ChatInput from './ChatInput';
 import ChatMessages, { type ChatMessage } from './ChatMessages';
 import TypingIndicator from './TypingIndicator';
-import popSound from '@/assets/sounds/pop.mp3';
-import notificationSound from '@/assets/sounds/notification.mp3';
-
-const popAudio = new Audio(popSound);
-popAudio.volume = 0.2;
-const notificationAudio = new Audio(notificationSound);
-notificationAudio.volume = 0.2;
 
 type FormData = {
    prompt: string;
@@ -27,7 +20,6 @@ const Chatbot = () => {
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
-      popAudio.play();
       setIsBotTyping(true);
       setErrors(null);
       try {
@@ -35,7 +27,6 @@ const Chatbot = () => {
             prompt,
             conversationId: conversationId.current,
          });
-         notificationAudio.play();
          setMessages((prev) => [
             ...prev,
             { content: data.response, role: 'bot' },
